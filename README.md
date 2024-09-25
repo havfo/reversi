@@ -11,4 +11,4 @@ This is a simple Reversi game implemented in Go. The game is played in the termi
 - Show possible moves
 
 ## Preview
-![](./assets/preview.mp4)
+![Preview](./assets/preview.gif)
