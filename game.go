@@ -6,7 +6,6 @@ type Game struct {
 	current    int
 	blackAI    bool
 	whiteAI    bool
-	moveCount  int
 	difficulty int
 }
 
@@ -16,7 +15,6 @@ func NewGame() *Game {
 		board:      NewBoard(),
 		current:    Black,
 		difficulty: 5,
-		moveCount:  4,
 	}
 }
 
@@ -41,10 +39,19 @@ var CellHeuristics = [8][8]int{
 
 // GetGamePhase determines the current phase of the game
 func (g *Game) GetGamePhase() GamePhase {
+	count := 0
+	for x := 0; x < BoardSize; x++ {
+		for y := 0; y < BoardSize; y++ {
+			if g.board[x][y] != Blank {
+				count++
+			}
+		}
+	}
+
 	switch {
-	case g.moveCount <= 20:
+	case count <= 20:
 		return EarlyGame
-	case g.moveCount > 20 && g.moveCount <= 44:
+	case count > 20 && count <= 44:
 		return MidGame
 	default:
 		return LateGame
@@ -115,8 +122,6 @@ func (g *Game) MakeMove(move Move, switchTurn bool) {
 	for _, flip := range move.Flips {
 		g.board[flip[0]][flip[1]] = g.current
 	}
-
-	g.moveCount++
 
 	if switchTurn {
 		g.SwitchTurn()
@@ -463,7 +468,6 @@ func (g *Game) Copy() *Game {
 	return &Game{
 		board:      g.board.Copy(),
 		current:    g.current,
-		moveCount:  g.moveCount,
 		difficulty: g.difficulty,
 	}
 }
@@ -472,7 +476,6 @@ func (g *Game) Copy() *Game {
 func (g *Game) Reset() {
 	g.board = NewBoard()
 	g.current = Black
-	g.moveCount = 4
 }
 
 // GetScore returns the score of the game
